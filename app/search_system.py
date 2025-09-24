@@ -13,13 +13,13 @@ class TermSearchSystem:
     """3단계 용어 검색 시스템 (쿼리 전처리 + 하이브리드 검색 + 결과 포맷팅)"""
     
     def __init__(self, 
-                 query_processor,  # 타입 힌트에서 인터페이스만 제거
-                 search_engine,    # 타입 힌트에서 인터페이스만 제거
-                 cache_manager):   # 타입 힌트에서 인터페이스만 제거
+                 query_processor,  
+                 search_engine,    
+                 cache_manager):   
         
-        self.query_processor = query_processor
-        self.search_engine = search_engine
-        self.cache_manager = cache_manager
+        self.query_processor = query_processor # 쿼리 전처리
+        self.search_engine = search_engine # 검색 시스템
+        self.cache_manager = cache_manager # 캐시 매니저
         
         logger.info("용어 검색 시스템 초기화 완료")
     

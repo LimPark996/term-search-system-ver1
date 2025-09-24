@@ -101,31 +101,3 @@ class CircuitBreaker:
         """강제로 Circuit Breaker 닫기 (관리자가 수동 복구할 때)"""
         self._reset()  # 모든 상태 초기화
         logger.info("Circuit Breaker: 강제로 CLOSED 상태로 설정됨")
-
-# === Circuit Breaker가 왜 필요한가? ===
-#
-# 예시 상황:
-# 1. 우리 서비스가 외부 API를 호출합니다
-# 2. 외부 API가 갑자기 응답하지 않습니다 (서버 다운, 네트워크 장애 등)
-# 3. 우리 서비스는 계속 재시도합니다
-# 4. 모든 요청이 타임아웃될 때까지 기다립니다 (예: 30초씩)
-# 5. 결국 우리 서비스도 느려지고 사용자 경험이 나빠집니다
-#
-# Circuit Breaker 적용 후:
-# 1. 5번 실패하면 더 이상 호출하지 않습니다
-# 2. 60초 후 1번만 테스트해봅니다
-# 3. 성공하면 정상 호출 재개, 실패하면 다시 60초 대기
-# 4. 우리 서비스는 빠르게 에러를 반환하여 사용자 경험 보호
-
-# === 사용 예시 ===
-# def unreliable_api_call():
-#     # 외부 API 호출 코드
-#     pass
-#
-# circuit_breaker = CircuitBreaker(failure_threshold=3, recovery_timeout=30)
-# 
-# try:
-#     result = circuit_breaker.call(unreliable_api_call)
-# except CircuitBreakerOpenException:
-#     # Circuit Breaker가 열려있음 - 대체 로직 실행
-#     result = "서비스 일시 중단 중입니다"

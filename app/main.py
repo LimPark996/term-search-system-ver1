@@ -42,7 +42,6 @@ def search_demo(search_system):
     print("\n=== 용어 검색 시스템 ===")
     print("사용법:")
     print("  - 검색어를 입력하고 Enter")
-    print("  - 'status' 입력하면 시스템 상태 확인")
     print("  - 'quit' 또는 'exit' 입력하면 종료")
     print("-" * 50)
     

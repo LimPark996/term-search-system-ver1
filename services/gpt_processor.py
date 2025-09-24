@@ -28,7 +28,7 @@ class GPTQueryProcessor:
     def process(self, query: str, user_id: Optional[str] = None) -> str:
         """쿼리 전처리 (Rate Limiting + Circuit Breaker 적용)"""
         
-        # 1. Rate Limiting 확인
+        # 1. Rate Limiting 확인 (사용자의 API 요청 제한 수량을 파악하고 과하지 않은지 확인하면서 제한함)
         if user_id and not self.is_rate_limited(user_id):
             raise RateLimitExceeded(f"사용자 {user_id}의 요청 제한을 초과했습니다")
         

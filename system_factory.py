@@ -6,7 +6,7 @@ from services.gpt_processor import GPTQueryProcessor
 from services.simple_processor import SimpleQueryProcessor
 from services.hybrid_engine import HybridSearchEngine
 from services.embedding_service import EmbeddingService
-from services.file_cache import CacheManager  # 통합된 캐시 매니저
+from services.file_cache import CacheManager  
 from services.sheets_loader import SheetsDataLoader, ExcelDataLoader
 
 from utils.rate_limiter import MemoryRateLimiter
@@ -32,6 +32,8 @@ class SystemFactory:
         if not terms:
             raise DataLoadError("용어 데이터를 로드할 수 없습니다")
         
+        logger.info(f"용어 데이터 로드 완료: {len(terms)}개")
+        
         # 4. 임베딩 서비스 생성
         embedding_service = EmbeddingService(
             api_key=config['openai_api_key'],
@@ -42,6 +44,7 @@ class SystemFactory:
         search_engine = HybridSearchEngine(
             terms=terms,
             embedding_service=embedding_service,
+            cache_manager=cache_manager,
             semantic_weight=config.get('semantic_weight', 0.6),
             colbert_weight=config.get('colbert_weight', 0.4),
             search_threshold=config.get('search_threshold', 0.3)
@@ -52,6 +55,8 @@ class SystemFactory:
         
         # 7. 검색 엔진 초기화
         search_engine.initialize()
+        if not search_engine.initialize():
+            raise RuntimeError("검색 엔진 초기화에 실패했습니다")
         
         # 8. 메인 시스템 조립
         from app.search_system import TermSearchSystem
@@ -70,7 +75,12 @@ class SystemFactory:
         cache_dir = config.get('cache_dir', 'cache')
         ttl = config.get('cache_ttl', 604800)  # 7일
         
-        return CacheManager(cache_dir=cache_dir, ttl=ttl)
+        cache_manager = CacheManager(cache_dir=cache_dir, ttl=ttl)
+        
+        # 시작 시 만료된 캐시 정리
+        cache_manager.cleanup_expired_cache()
+        
+        return cache_manager
     
     @staticmethod
     def _create_data_loader(config: dict):
@@ -122,7 +132,7 @@ class SystemFactory:
                 gpt_processor = GPTQueryProcessor(
                     api_key=openai_api_key,
                     rate_limiter=rate_limiter,
-                    max_requests_per_minute=config.get('max_requests_per_minute', 10)
+                    max_requests_per_minute=config.get('max_requests_per_minute', 10) # 1분당 최대 API 요청 수: 10회
                 )
                 
                 logger.info("GPT 쿼리 프로세서 생성 성공")
