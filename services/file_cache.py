@@ -106,7 +106,7 @@ class CacheManager:
             return None
         
         try:
-            # FAISS 인덱스 로드 (의미적 유사도?가 높은 순서에서 낮은 순서로 인덱스 정렬)
+            # FAISS 인덱스 로드
             semantic_index = faiss.read_index(str(index_file))
             
             # 메타데이터 로드

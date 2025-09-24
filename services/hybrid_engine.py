@@ -215,7 +215,7 @@ class HybridSearchEngine:
                 embeddings_array = np.array(self.semantic_embeddings, dtype=np.float32)
                 dimension = embeddings_array.shape[1]
                 
-                self.semantic_index = faiss.IndexFlatIP(dimension) # faiss 활용하여 의미적 유사도가 높은 순서에서 낮은 순서로 인덱스 정렬
+                self.semantic_index = faiss.IndexFlatIP(dimension)
                 self.semantic_index.add(embeddings_array)
                 logger.info(f"FAISS 인덱스 생성: {embeddings_array.shape}")
             
