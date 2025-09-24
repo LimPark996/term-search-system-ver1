@@ -100,38 +100,7 @@ class TermSearchSystem:
                 'message': f'시스템 오류가 발생했습니다: {str(e)}',
                 'original_query': natural_query
             }
-    
-    def get_system_status(self) -> Dict[str, Any]:
-        """시스템 상태 조회"""
-        try:
-            status = {
-                'search_engine_ready': self.search_engine.is_ready(),
-                'query_processor': type(self.query_processor).__name__,
-                'search_engine': type(self.search_engine).__name__,
-                'cache_manager': type(self.cache_manager).__name__
-            }
-            
-            # 캐시 통계 (통합 캐시 매니저)
-            if hasattr(self.cache_manager, 'get_cache_stats'):
-                cache_stats = self.cache_manager.get_cache_stats()
-                status['cache_stats'] = cache_stats
-            
-            # Circuit Breaker 상태 (GPT 프로세서인 경우)
-            if hasattr(self.query_processor, 'circuit_breaker'):
-                status['circuit_breaker_state'] = str(self.query_processor.circuit_breaker.get_state())
-            
-            # 임베딩 서비스 상태
-            if hasattr(self.search_engine, 'embedding_service'):
-                embedding_service = self.search_engine.embedding_service
-                if hasattr(embedding_service, 'get_circuit_breaker_state'):
-                    status['embedding_circuit_breaker'] = str(embedding_service.get_circuit_breaker_state())
-            
-            return status
-            
-        except Exception as e:
-            logger.error(f"시스템 상태 조회 실패: {e}")
-            return {'error': str(e)}
-    
+        
     def clear_cache(self) -> Dict[str, Any]:
         """캐시 전체 삭제"""
         try:

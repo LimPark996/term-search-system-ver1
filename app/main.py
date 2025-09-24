@@ -57,14 +57,6 @@ def search_demo(search_system):
             if not query:
                 continue
                 
-            if query.lower() == 'status':
-                # 시스템 상태 조회
-                status = search_system.get_system_status()
-                print("\n=== 시스템 상태 ===")
-                for key, value in status.items():
-                    print(f"{key}: {value}")
-                continue
-            
             # 검색 실행
             print(f"\n'{query}' 검색 중...")
             result = search_system.search(query, "user", 10)
